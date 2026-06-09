@@ -19,6 +19,10 @@ else
     bashio::log.info "Pipe vorhanden ✓"
 fi
 
+# Pipe offen halten (verhindert Blockierung wenn kein Leser da ist)
+tail -f "${PIPE_PATH}" > /dev/null &
+bashio::log.info "Pipe-Reader gestartet ✓"
+
 # dbus + avahi starten
 mkdir -p /var/run/dbus
 dbus-daemon --system --nofork &
@@ -30,6 +34,9 @@ sleep 1
 cat > /etc/shairport-sync.conf << EOF
 general = {
   name = "${AIRPLAY_NAME}";
+};
+
+diagnostics = {
   log_verbosity = 0;
 };
 
