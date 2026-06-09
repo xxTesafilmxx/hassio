@@ -19,25 +19,18 @@ else
     bashio::log.info "Pipe vorhanden ✓"
 fi
 
-# Pipe offen halten (verhindert Blockierung wenn kein Leser da ist)
-tail -f "${PIPE_PATH}" > /dev/null &
-bashio::log.info "Pipe-Reader gestartet ✓"
-
-# DBus starten und warten
+# DBus starten
 mkdir -p /var/run/dbus
 rm -f /var/run/dbus/pid
 dbus-daemon --system --nofork &
-DBUS_PID=$!
-bashio::log.info "DBus gestartet (PID: ${DBUS_PID})"
 sleep 2
 
-# Avahi starten und warten
+# Avahi starten
 rm -f /var/run/avahi-daemon/pid
 mkdir -p /var/run/avahi-daemon
 avahi-daemon --no-chroot -D 2>&1 || bashio::log.warning "Avahi-Start fehlgeschlagen"
 sleep 2
 
-# Avahi-Status prüfen
 if avahi-daemon --check 2>/dev/null; then
     bashio::log.info "Avahi läuft ✓"
 else
@@ -45,6 +38,7 @@ else
 fi
 
 # shairport-sync.conf generieren
+# stdout als Output → wir schreiben selbst in die Pipe
 cat > /etc/shairport-sync.conf << EOF
 general = {
   name = "${AIRPLAY_NAME}";
@@ -54,16 +48,11 @@ diagnostics = {
   log_verbosity = 1;
 };
 
-pipe = {
-  name = "${PIPE_PATH}";
-};
-
-alsa = {
-  output_device = "null";
-  use_mmap = "no";
-  disable_synchronization = "yes";
+stdout = {
 };
 EOF
 
-bashio::log.info "Starte shairport-sync..."
-exec shairport-sync -o pipe -c /etc/shairport-sync.conf
+bashio::log.info "Starte shairport-sync (stdout → pipe)..."
+
+# shairport-sync schreibt nach stdout → direkt in Pipe umleiten
+exec shairport-sync -o stdout -c /etc/shairport-sync.conf > "${PIPE_PATH}"
