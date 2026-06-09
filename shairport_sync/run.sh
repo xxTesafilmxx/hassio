@@ -23,12 +23,26 @@ fi
 tail -f "${PIPE_PATH}" > /dev/null &
 bashio::log.info "Pipe-Reader gestartet ✓"
 
-# dbus + avahi starten
+# DBus starten und warten
 mkdir -p /var/run/dbus
+rm -f /var/run/dbus/pid
 dbus-daemon --system --nofork &
-sleep 1
-avahi-daemon --no-chroot -D
-sleep 1
+DBUS_PID=$!
+bashio::log.info "DBus gestartet (PID: ${DBUS_PID})"
+sleep 2
+
+# Avahi starten und warten
+rm -f /var/run/avahi-daemon/pid
+mkdir -p /var/run/avahi-daemon
+avahi-daemon --no-chroot -D 2>&1 || bashio::log.warning "Avahi-Start fehlgeschlagen – fahre trotzdem fort"
+sleep 2
+
+# Avahi-Status prüfen
+if avahi-daemon --check 2>/dev/null; then
+    bashio::log.info "Avahi läuft ✓"
+else
+    bashio::log.warning "Avahi nicht verfügbar – shairport-sync startet ohne mDNS"
+fi
 
 # shairport-sync.conf generieren
 cat > /etc/shairport-sync.conf << EOF
