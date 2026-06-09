@@ -1,4 +1,4 @@
-ARG BUILD_FROM
+ARG BUILD_FROM=homeassistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
 RUN apk add --no-cache \
