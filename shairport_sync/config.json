@@ -1,6 +1,6 @@
 {
   "name": "Shairport Sync (Pipe)",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "slug": "shairport_sync",
   "description": "AirPlay Receiver mit Named Pipe Support für OwnTone",
   "url": "https://github.com/xxTesafilmxx/hassio",
