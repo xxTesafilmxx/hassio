@@ -1,7 +1,7 @@
 ARG BUILD_FROM=homeassistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
-# Abhängigkeiten aus Alpine 3.18 (im Base-Image vorhanden)
+# Abhängigkeiten mit korrekten Alpine-Paketnamen
 RUN apk add --no-cache \
     avahi \
     avahi-tools \
@@ -10,8 +10,8 @@ RUN apk add --no-cache \
     libconfig \
     openssl \
     popt \
-    libglib \
-    libsoxr
+    glib \
+    soxr
 
 # shairport-sync-4.3.2-r1 direkt aus Alpine 3.20 Community installieren
 RUN wget -q https://dl-cdn.alpinelinux.org/alpine/v3.20/community/aarch64/shairport-sync-4.3.2-r1.apk \
