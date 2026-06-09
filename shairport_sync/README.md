@@ -5,6 +5,7 @@
 ## About
 
 Enables AirPlay audio streaming to Home Assistant.
+With pipe to Owntone
 
 [license-shield]: https://img.shields.io/github/license/v3rm0n/addon-shairport-sync.svg
 [version-shield]: https://images.microbadger.com/badges/version/maidok/shairport-sync.svg
