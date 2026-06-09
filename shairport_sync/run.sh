@@ -39,4 +39,4 @@ pipe = {
 EOF
 
 bashio::log.info "Starte shairport-sync..."
-exec shairport-sync -o pipe
+exec shairport-sync -o pipe -c /etc/shairport-sync.conf
