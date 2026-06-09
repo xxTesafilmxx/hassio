@@ -38,6 +38,7 @@ RUN git clone --depth 1 --branch 4.3.2 \
         --with-ssl=openssl \
         --with-soxr \
         --with-pipe \
+        --with-stdout \
     && make -j$(nproc) \
     && make install \
     && rm -rf /tmp/shairport-sync
@@ -45,4 +46,4 @@ RUN git clone --depth 1 --branch 4.3.2 \
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
-CMD ["/run.sh"]
+CMD [ "/run.sh" ]
