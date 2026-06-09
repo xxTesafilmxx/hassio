@@ -34,14 +34,14 @@ sleep 2
 # Avahi starten und warten
 rm -f /var/run/avahi-daemon/pid
 mkdir -p /var/run/avahi-daemon
-avahi-daemon --no-chroot -D 2>&1 || bashio::log.warning "Avahi-Start fehlgeschlagen – fahre trotzdem fort"
+avahi-daemon --no-chroot -D 2>&1 || bashio::log.warning "Avahi-Start fehlgeschlagen"
 sleep 2
 
 # Avahi-Status prüfen
 if avahi-daemon --check 2>/dev/null; then
     bashio::log.info "Avahi läuft ✓"
 else
-    bashio::log.warning "Avahi nicht verfügbar – shairport-sync startet ohne mDNS"
+    bashio::log.warning "Avahi nicht verfügbar"
 fi
 
 # shairport-sync.conf generieren
@@ -51,11 +51,17 @@ general = {
 };
 
 diagnostics = {
-  log_verbosity = 0;
+  log_verbosity = 1;
 };
 
 pipe = {
   name = "${PIPE_PATH}";
+};
+
+alsa = {
+  output_device = "null";
+  use_mmap = "no";
+  disable_synchronization = "yes";
 };
 EOF
 
