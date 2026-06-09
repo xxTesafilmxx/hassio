@@ -1,8 +1,22 @@
 ARG BUILD_FROM=homeassistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
-# Abhängigkeiten mit korrekten Alpine-Paketnamen
+# Build-Abhängigkeiten
 RUN apk add --no-cache \
+    git \
+    build-base \
+    autoconf \
+    automake \
+    libtool \
+    pkgconfig \
+    avahi-dev \
+    alsa-lib-dev \
+    libconfig-dev \
+    openssl-dev \
+    popt-dev \
+    soxr-dev \
+    glib-dev \
+    dbus-dev \
     avahi \
     avahi-tools \
     dbus \
@@ -10,14 +24,23 @@ RUN apk add --no-cache \
     libconfig \
     openssl \
     popt \
-    glib \
-    soxr
+    soxr \
+    glib
 
-# shairport-sync-4.3.2-r1 direkt aus Alpine 3.20 Community installieren
-RUN wget -q https://dl-cdn.alpinelinux.org/alpine/v3.20/community/aarch64/shairport-sync-4.3.2-r1.apk \
-    -O /tmp/shairport-sync.apk \
-    && apk add --no-cache --allow-untrusted /tmp/shairport-sync.apk \
-    && rm /tmp/shairport-sync.apk
+# shairport-sync aus Source bauen (stabile Version 4.3.2)
+RUN git clone --depth 1 --branch 4.3.2 \
+    https://github.com/mikebrady/shairport-sync.git /tmp/shairport-sync \
+    && cd /tmp/shairport-sync \
+    && autoreconf -i \
+    && ./configure \
+        --with-alsa \
+        --with-avahi \
+        --with-ssl=openssl \
+        --with-soxr \
+        --with-pipe \
+    && make -j$(nproc) \
+    && make install \
+    && rm -rf /tmp/shairport-sync
 
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
