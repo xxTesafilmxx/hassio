@@ -4,7 +4,6 @@ bashio::log.info "=== Shairport Sync (Pipe Edition) startet ==="
 
 AIRPLAY_NAME=$(bashio::config 'airplay_name')
 PIPE_PATH=$(bashio::config 'pipe_path')
-LOG_LEVEL=$(bashio::config 'log_level')
 
 bashio::log.info "AirPlay Name : ${AIRPLAY_NAME}"
 bashio::log.info "Pipe Pfad    : ${PIPE_PATH}"
@@ -31,11 +30,7 @@ sleep 1
 cat > /etc/shairport-sync.conf << EOF
 general = {
   name = "${AIRPLAY_NAME}";
-  log_verbosity = 1;
-};
-
-alsa = {
-  output_device = "default";
+  log_verbosity = 0;
 };
 
 pipe = {
@@ -44,4 +39,4 @@ pipe = {
 EOF
 
 bashio::log.info "Starte shairport-sync..."
-exec shairport-sync -v
+exec shairport-sync -o pipe
